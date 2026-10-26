@@ -1,0 +1,90 @@
+@import "tailwindcss";
+
+:root {
+  --page-bg: #F8F7F3;
+  --card-bg: #FFFFFF;
+  --primary-blue: #2563EB;
+  --primary-hover: #1D4ED8;
+  --text-navy: #172B4D;
+  --text-main: #263449;
+  --text-secondary: #697586;
+  --border-subtle: #E6E8ED;
+  --surface-blue: #EEF4FF;
+  --status-success: #15803D;
+  --status-warning: #B45309;
+  --status-error: #DC2626;
+}
+
+@theme {
+  --color-page: var(--page-bg);
+  --color-card: var(--card-bg);
+  --color-primary: var(--primary-blue);
+  --color-primary-hover: var(--primary-hover);
+  --color-navy: var(--text-navy);
+  --color-main: var(--text-main);
+  --color-secondary: var(--text-secondary);
+  --color-border-subtle: var(--border-subtle);
+  --color-surface-blue: var(--surface-blue);
+  --color-success: var(--status-success);
+  --color-warning: var(--status-warning);
+  --color-error: var(--status-error);
+}
+
+body {
+  background-color: var(--page-bg);
+  color: var(--text-main);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom utility classes matching the design tokens */
+.bg-page {
+  background-color: #F8F7F3;
+}
+
+.bg-card-surface {
+  background-color: #FFFFFF;
+}
+
+.text-navy {
+  color: #172B4D;
+}
+
+.text-main {
+  color: #263449;
+}
+
+.text-secondary {
+  color: #697586;
+}
+
+.border-subtle {
+  border-color: #E6E8ED;
+}
+
+.bg-surface-blue {
+  background-color: #EEF4FF;
+}
+
+.text-primary-blue {
+  color: #2563EB;
+}
+
+.bg-primary-blue {
+  background-color: #2563EB;
+}
+
+.hover\:bg-primary-hover:hover {
+  background-color: #1D4ED8;
+}
+
+/* Accessible focus ring */
+.focus-ring {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+.focus-ring:focus-visible {
+  outline: 2px solid #2563EB;
+  outline-offset: 2px;
+}
