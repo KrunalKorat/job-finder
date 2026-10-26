@@ -17,7 +17,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    "public/**",
+    "src/shaders/**",
   ]),
 ]);
+
 
 export default eslintConfig;

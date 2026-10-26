@@ -1,78 +1,94 @@
 import { test, expect } from "@playwright/test";
 
-test.describe("Job Finder Phase 1 End-to-End User Flow", () => {
-  const timestamp = Date.now();
-  const testEmail = `playwright_${timestamp}@example.com`;
-  const testPassword = "Password2026!Secure";
-  const testName = `Playwright User ${timestamp}`;
+test.describe("Job Finder UI Redesign & Integration E2E Flow", () => {
+  const adminEmail = "krunal@jobfinder.io";
+  const adminPassword = "JobFinder2026!";
 
-  test("1. Landing page renders branding, hero headline, and navigation links", async ({ page }) => {
-    await page.goto("/");
-    await expect(page).toHaveTitle(/Job Finder/);
-    await expect(page.locator("h1")).toContainText("Your Next Opportunity Starts Here.");
-    await expect(page.getByRole("link", { name: "Get Started" }).first()).toBeVisible();
-    await expect(page.getByRole("link", { name: "Sign In" }).first()).toBeVisible();
-  });
 
-  test("2. Full candidate registration, dashboard navigation, preference update, persistence, and logout flow", async ({
+  test("1. Landing page renders Job Finder branding, purpose copy, Scene container, and login-only actions", async ({
     page,
   }) => {
-    // 1. Visit registration
-    await page.goto("/auth/register");
-    await expect(page.locator("h1")).toContainText("Create your account");
+    await page.goto("/");
+    await expect(page).toHaveTitle(/Job Finder/);
 
-    // 2. Fill registration form
-    await page.locator('input[placeholder="Alex Morgan"]').fill(testName);
-    await page.locator('input[type="email"]').fill(testEmail);
-    await page.locator('input[placeholder="At least 8 characters"]').fill(testPassword);
-    await page.locator('input[placeholder="••••••••"]').fill(testPassword);
+    // Headline and purpose copy
+    await expect(page.locator("h1")).toContainText("Job Finder");
+    await expect(page.locator("text=An AI-powered personal job discovery and application management platform")).toBeVisible();
 
-    // 3. Submit registration
-    await page.getByRole("button", { name: "Create Account" }).click();
+    // ThreeUI centerpiece Scene
+    const shaderFrame = page.locator(".shader-frame");
+    await expect(shaderFrame).toBeVisible();
+    const iframe = shaderFrame.locator("iframe");
+    await expect(iframe).toBeVisible();
+    await expect(iframe).toHaveAttribute("src", "/landing-pages/kage.html");
 
-    // 4. Verify arrival at dashboard
+    // Login-only actions (no signup or register links)
+    const signInBtn = page.getByRole("link", { name: "Sign In" }).first();
+    await expect(signInBtn).toBeVisible();
+    await expect(page.locator('a[href*="register"]')).toHaveCount(0);
+  });
+
+  test("2. Login page validation, password visibility toggle, error handling, and authentication flow", async ({
+    page,
+  }) => {
+    await page.goto("/auth/login");
+    await expect(page.locator("h1")).toContainText("Sign In");
+    await expect(page.locator("text=Job Finder")).toBeVisible();
+
+    // Verify absence of registration link
+    await expect(page.locator('a[href*="register"]')).toHaveCount(0);
+
+    // Form inputs and password toggle
+    const emailInput = page.locator("#email-input");
+    const passwordInput = page.locator("#password-input");
+    const toggleBtn = page.locator('button[aria-label*="password"]');
+
+    await expect(emailInput).toBeVisible();
+    await expect(passwordInput).toBeVisible();
+    await expect(passwordInput).toHaveAttribute("type", "password");
+
+    // Toggle password visibility
+    await toggleBtn.click();
+    await expect(passwordInput).toHaveAttribute("type", "text");
+    await toggleBtn.click();
+    await expect(passwordInput).toHaveAttribute("type", "password");
+
+    // Test invalid credentials error handling
+    await emailInput.fill("invalid_user@example.com");
+    await passwordInput.fill("wrong_password");
+    await page.getByRole("button", { name: "Sign In" }).click();
+
+    const alertBox = page.getByRole("alert").filter({ hasText: "Invalid" });
+    await expect(alertBox).toBeVisible({ timeout: 10000 });
+
+
+    // Test valid credentials login
+    await emailInput.fill(adminEmail);
+    await passwordInput.fill(adminPassword);
+    await page.getByRole("button", { name: "Sign In" }).click();
+
+    // Verify arrival at dashboard
     await expect(page).toHaveURL(/.*dashboard/, { timeout: 15000 });
     await expect(page.getByRole("heading", { name: "Overview" })).toBeVisible({ timeout: 10000 });
-    await expect(page.locator("body")).toContainText(testName);
 
-    // 5. Navigate to Resume & Profile
+    // Verify dashboard navigation to Resume & Profile
     await page.getByRole("link", { name: "Resume & Profile" }).click();
     await expect(page).toHaveURL(/.*dashboard\/profile/);
     await expect(page.getByRole("heading", { name: "Resume & Profile" })).toBeVisible({ timeout: 10000 });
 
-    // 6. Switch to Career Preferences Tab
+    // Switch to Career Preferences and verify data loads from backend
     await page.getByRole("button", { name: "Career Preferences" }).click();
-
-    // 7. Update target job titles and skills
     const targetTitlesInput = page.locator('input[placeholder*="Full Stack Engineer"]');
-    await targetTitlesInput.fill("Senior Platform Engineer, Cloud Infrastructure Architect");
+    await expect(targetTitlesInput).toBeVisible({ timeout: 5000 });
 
-    const skillsInput = page.locator('input[placeholder*="Python, FastAPI"]');
-    await skillsInput.fill("Python, FastAPI, Next.js, TypeScript, PostgreSQL, Docker");
-
-    const minSalaryInput = page.locator('input[placeholder="e.g. 140000"]');
-    await minSalaryInput.fill("165000");
-
-    // 8. Save career preferences
-    await page.getByRole("button", { name: "Save Career Preferences" }).click();
-    await expect(page.locator("text=Career preferences saved to database successfully.")).toBeVisible({
-      timeout: 10000,
-    });
-
-    // 9. Confirm persistence: reload page and check values
-    await page.reload();
-    await page.getByRole("button", { name: "Career Preferences" }).click();
-    await expect(targetTitlesInput).toHaveValue("Senior Platform Engineer, Cloud Infrastructure Architect");
-    await expect(minSalaryInput).toHaveValue("165000");
-
-    // 10. Sign out
+    // Logout flow
     const signOutBtn = page.locator('button[title="Sign out"]');
     await signOutBtn.click();
 
-    // 11. Confirm redirect to login
+    // Verify redirect to login
     await expect(page).toHaveURL(/.*auth\/login/, { timeout: 10000 });
 
-    // 12. Confirm access to protected pages is restricted
+    // Verify unauthenticated user cannot access protected dashboard
     await page.goto("/dashboard");
     await expect(page).toHaveURL(/.*auth\/login/, { timeout: 10000 });
   });

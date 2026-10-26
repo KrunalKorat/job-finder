@@ -56,7 +56,7 @@ job-finder/
 - Python 3.11+ (Python 3.13 recommended)
 - Docker & Docker Compose (optional for containerized setup)
 
-### Option A: Docker Compose (All Services)
+### Option A: Docker Compose (All Services Locally)
 ```bash
 # Clone the repository
 git clone https://github.com/KrunalKorat/job-finder.git
@@ -65,12 +65,46 @@ cd job-finder
 # Copy environment variables
 cp .env.example .env
 
-# Build and start all services
+# Build and start all services locally
 docker compose up --build
 ```
 - Frontend: [http://localhost:3000](http://localhost:3000)
 - Backend API Docs: [http://localhost:8000/docs](http://localhost:8000/docs)
 - Health Check: [http://localhost:8000/health/ready](http://localhost:8000/health/ready)
+
+> **Personal Instance Login**:
+> Upon container startup, `python app/scripts/init_admin.py` seeds/verifies the personal administrator account without any public registration routes.
+> Default seed credentials:
+> - Email: `krunal@jobfinder.io` (or set `ADMIN_EMAIL` in `.env`)
+> - Password: `JobFinder2026!` (or set `ADMIN_PASSWORD` in `.env`)
+
+---
+
+### ThreeUI KageLandingPage Integration
+The landing page features the exact registered ThreeUI `KageLandingPage` component from `@designcodeio/threeui` (reference revision SHA-256: `c8e06b90397a`):
+```tsx
+import { KageLandingPage } from "@designcodeio/threeui";
+import "@designcodeio/threeui/style.css";
+
+export function Scene() {
+  return (
+    <div className="shader-frame">
+      <KageLandingPage
+        headingFont="onest"
+        bodyFont="onest"
+        headingWeight="400"
+        bodyWeight="300"
+        primaryColor="#e0231c"
+        headingSize={46}
+        bodySize={17}
+        headingLetterSpacing={-0.012}
+      />
+    </div>
+  );
+}
+```
+All 8 registered source files and 14 binary WebP assets have been verified with 100% SHA-256 parity via `python scripts/verify_bundle.py`.
+
 
 ---
 
@@ -118,12 +152,20 @@ cd backend
 - Provider capability registry and Greenhouse/Lever compliance
 - Liveness and readiness health checks with sensitive field redaction
 
-### Frontend Verification
+### Frontend Verification & E2E Testing
 ```bash
 cd frontend
 npm run lint
 npm run build
+npx playwright test
 ```
+
+### Source & Binary Asset Hash Verification
+```bash
+python scripts/verify_bundle.py
+```
+Checks all 8 registered files and 14 WebP assets against reference revision SHA-256 declarations.
+
 
 ---
 

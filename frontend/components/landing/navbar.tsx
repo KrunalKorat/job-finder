@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { Briefcase, Menu, X, ArrowRight } from "lucide-react";
+import { Briefcase, Menu, X, ArrowRight, LayoutDashboard, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/auth-context";
 
@@ -11,7 +11,7 @@ export function LandingNavbar() {
   const { user } = useAuth();
 
   return (
-    <header className="sticky top-0 z-50 bg-[#F8F7F3]/90 backdrop-blur-md border-b border-[#E6E8ED]">
+    <header className="sticky top-0 z-50 bg-[#F8F7F3]/95 backdrop-blur-md border-b border-[#E6E8ED]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between">
         {/* Brand Logo */}
         <Link href="/" className="flex items-center gap-2.5 group">
@@ -23,7 +23,7 @@ export function LandingNavbar() {
               Job Finder
             </span>
             <span className="block text-[10px] uppercase font-semibold tracking-wider text-[#2563EB] -mt-1">
-              Authorized Discovery
+              AI Job Platform
             </span>
           </div>
         </Link>
@@ -31,22 +31,22 @@ export function LandingNavbar() {
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-8">
           <Link
-            href="#how-it-works"
+            href="#experience"
             className="text-sm font-medium text-[#263449] hover:text-[#2563EB] transition-colors"
           >
-            How It Works
+            Experience
           </Link>
           <Link
             href="#features"
             className="text-sm font-medium text-[#263449] hover:text-[#2563EB] transition-colors"
           >
-            Features
+            Capabilities
           </Link>
           <Link
             href="#privacy-automation"
             className="text-sm font-medium text-[#263449] hover:text-[#2563EB] transition-colors"
           >
-            Privacy & Automation
+            Automation Guardrails
           </Link>
           <Link
             href="#faq"
@@ -60,24 +60,19 @@ export function LandingNavbar() {
         <div className="hidden md:flex items-center gap-3">
           {user ? (
             <Link href="/dashboard">
-              <Button variant="primary" size="md">
-                Go to Dashboard
+              <Button variant="primary" size="md" className="flex items-center gap-2">
+                <LayoutDashboard className="w-4 h-4" />
+                <span>Open Dashboard</span>
                 <ArrowRight className="w-4 h-4 ml-1" />
               </Button>
             </Link>
           ) : (
-            <>
-              <Link href="/auth/login">
-                <Button variant="ghost" size="md">
-                  Sign In
-                </Button>
-              </Link>
-              <Link href="/auth/register">
-                <Button variant="primary" size="md">
-                  Get Started
-                </Button>
-              </Link>
-            </>
+            <Link href="/auth/login">
+              <Button variant="primary" size="md" className="flex items-center gap-2">
+                <LogIn className="w-4 h-4" />
+                <span>Sign In</span>
+              </Button>
+            </Link>
           )}
         </div>
 
@@ -98,25 +93,25 @@ export function LandingNavbar() {
         <div className="md:hidden border-b border-[#E6E8ED] bg-[#F8F7F3] px-4 pt-3 pb-6 space-y-4">
           <nav className="flex flex-col space-y-3">
             <Link
-              href="#how-it-works"
+              href="#experience"
               onClick={() => setMobileMenuOpen(false)}
               className="text-sm font-medium text-[#263449] hover:text-[#2563EB] py-1"
             >
-              How It Works
+              Experience
             </Link>
             <Link
               href="#features"
               onClick={() => setMobileMenuOpen(false)}
               className="text-sm font-medium text-[#263449] hover:text-[#2563EB] py-1"
             >
-              Features
+              Capabilities
             </Link>
             <Link
               href="#privacy-automation"
               onClick={() => setMobileMenuOpen(false)}
               className="text-sm font-medium text-[#263449] hover:text-[#2563EB] py-1"
             >
-              Privacy & Automation
+              Automation Guardrails
             </Link>
             <Link
               href="#faq"
@@ -129,23 +124,18 @@ export function LandingNavbar() {
           <div className="pt-3 border-t border-[#E6E8ED] flex flex-col gap-2">
             {user ? (
               <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)}>
-                <Button variant="primary" size="md" className="w-full">
-                  Go to Dashboard
+                <Button variant="primary" size="md" className="w-full flex items-center justify-center gap-2">
+                  <LayoutDashboard className="w-4 h-4" />
+                  <span>Open Dashboard</span>
                 </Button>
               </Link>
             ) : (
-              <>
-                <Link href="/auth/login" onClick={() => setMobileMenuOpen(false)}>
-                  <Button variant="outline" size="md" className="w-full">
-                    Sign In
-                  </Button>
-                </Link>
-                <Link href="/auth/register" onClick={() => setMobileMenuOpen(false)}>
-                  <Button variant="primary" size="md" className="w-full">
-                    Get Started
-                  </Button>
-                </Link>
-              </>
+              <Link href="/auth/login" onClick={() => setMobileMenuOpen(false)}>
+                <Button variant="primary" size="md" className="w-full flex items-center justify-center gap-2">
+                  <LogIn className="w-4 h-4" />
+                  <span>Sign In</span>
+                </Button>
+              </Link>
             )}
           </div>
         </div>
